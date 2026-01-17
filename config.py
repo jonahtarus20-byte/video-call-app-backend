@@ -10,7 +10,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/video_call_db"
+        f"sqlite:///{BASE_DIR / 'instance' / 'video_call.db'}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret")

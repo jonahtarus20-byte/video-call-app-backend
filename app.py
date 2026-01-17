@@ -2,6 +2,7 @@ from flask import Flask, redirect, jsonify
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_socketio import SocketIO
 from config import Config
 from models import db, bcrypt
 from errors import APIError
@@ -14,6 +15,7 @@ db.init_app(app)
 bcrypt.init_app(app)
 jwt = JWTManager(app)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # Initialize SocketIO with CORS
 
 @jwt.invalid_token_loader
 def invalid_token_callback(error):
@@ -38,6 +40,7 @@ api = Api(
 
 from resources.auth import api as auth_ns
 from resources.rooms import api as rooms_ns
+import signaling  # Import signaling to register SocketIO events
 
 api.add_namespace(auth_ns, path="/auth")
 api.add_namespace(rooms_ns, path="/rooms")
@@ -77,4 +80,4 @@ def health():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    socketio.run(app, debug=True)
